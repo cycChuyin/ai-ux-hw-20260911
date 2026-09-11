@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+﻿import os
+
+functional_map_code = """import React, { useState } from 'react';
 import { TabId, PriorityLevel, FunctionalNode } from '../types';
 import { functionalModules } from '../data/functionalMapData';
 import { NodeDetailDrawer } from '../components/NodeDetailDrawer';
@@ -485,3 +487,9 @@ export const FunctionalMap: React.FC<FunctionalMapProps> = ({ onNavigateTab }) =
     </div>
   );
 };
+"""
+
+with open('src/pages/FunctionalMap.tsx', 'w', encoding='utf-8') as f:
+    f.write(functional_map_code)
+
+print("FunctionalMap.tsx updated with Flowchart View successfully")

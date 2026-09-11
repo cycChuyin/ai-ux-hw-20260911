@@ -49,3 +49,6 @@ export { default as Zap } from 'lucide-react/dist/esm/icons/zap.mjs';
 export { default as Repeat } from 'lucide-react/dist/esm/icons/repeat.mjs';
 export { default as Code } from 'lucide-react/dist/esm/icons/code.mjs';
 export { default as Eye } from 'lucide-react/dist/esm/icons/eye.mjs';
+export { default as ArrowDown } from 'lucide-react/dist/esm/icons/arrow-down.mjs';
+export { default as Workflow } from 'lucide-react/dist/esm/icons/workflow.mjs';
+
