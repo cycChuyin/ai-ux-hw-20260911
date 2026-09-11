@@ -1,0 +1,157 @@
+﻿import React, { useState } from 'react';
+import { TabId, InventoryItem } from '../types';
+import { initialInventoryList } from '../data/initialInventory';
+import { 
+  Smartphone, 
+  RotateCcw, 
+  CheckCircle2, 
+  AlertTriangle, 
+  Plus, 
+  ShoppingCart, 
+  Bell, 
+  Search, 
+  ChevronLeft, 
+  Home, 
+  Package, 
+  Check, 
+  ShieldAlert
+} from 'lucide-react';
+
+interface PrototypeProps {
+  onNavigateTab: (tab: TabId) => void;
+}
+
+type AppScreen = 'home' | 'list' | 'detail' | 'add' | 'reminders' | 'shopping';
+type GuidedFlow = 'flow1' | 'flow2' | 'flow3' | 'free';
+
+export const Prototype: React.FC<PrototypeProps> = () => {
+  const [items, setItems] = useState<InventoryItem[]>(initialInventoryList);
+  const [currentScreen, setCurrentScreen] = useState<AppScreen>('home');
+  const [selectedItemId, setSelectedItemId] = useState<string>('item-1');
+  
+  const [activeFlow, setActiveFlow] = useState<GuidedFlow>('flow1');
+  const [currentStep, setCurrentStep] = useState<number>(1);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [showDuplicateWarning, setShowDuplicateWarning] = useState<boolean>(false);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+
+  const [formName, setFormName] = useState<string>('常溫燕麥奶');
+  const [formCategory, setFormCategory] = useState<string>('食品');
+  const [formQty, setFormQty] = useState<number>(1);
+  const [formUnit, setFormUnit] = useState<string>('瓶');
+  const [formLocation, setFormLocation] = useState<string>('廚房乾貨櫃');
+  const [formExpiry, setFormExpiry] = useState<string>('2026/10/30');
+
+  const triggerToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 2800);
+  };
+
+  const handleReset = () => {
+    setItems(initialInventoryList);
+    setCurrentScreen('home');
+    setSelectedItemId('item-1');
+    setCurrentStep(1);
+    setShowDuplicateWarning(false);
+    setFormName('常溫燕麥奶');
+    setFormCategory('食品');
+    setFormQty(1);
+    setFormUnit('瓶');
+    setFormLocation('廚房乾貨櫃');
+    setFormExpiry('2026/10/30');
+    triggerToast('模擬器已重置為初始家庭庫存狀態');
+  };
+
+  const selectedItem = items.find((i) => i.id === selectedItemId) || items[0];
+  const totalCount = items.reduce((sum, item) => sum + item.quantity, 0);
+  const expiringItems = items.filter((i) => i.daysRemaining >= 0 && i.daysRemaining <= 7 && i.quantity > 0);
+  const expiredItems = items.filter((i) => i.daysRemaining < 0 && i.quantity > 0);
+  const lowStockItems = items.filter((i) => i.status === 'low-stock' || i.quantity <= 1);
+  const shoppingListItems = items.filter((i) => i.inShoppingList);
+
+  const handleNameChange = (val: string) => {
+    setFormName(val);
+    if (val.includes('牛奶') || val.includes('鮮乳')) {
+      setShowDuplicateWarning(true);
+    } else {
+      setShowDuplicateWarning(false);
+    }
+  };
+
+  const handleSaveItem = () => {
+    if (!formName.trim()) {
+      triggerToast('請輸入物品名稱！');
+      return;
+    }
+    setIsSaving(true);
+    setTimeout(() => {
+      setIsSaving(false);
+      const newItem: InventoryItem = {
+        id: `item-${Date.now()}`,
+        name: formName,
+        category: formCategory,
+        location: formLocation,
+        quantity: formQty,
+        unit: formUnit,
+        purchaseDate: '2026/09/11',
+        expiryDate: formExpiry,
+        daysRemaining: 45,
+        status: 'normal',
+        icon: formCategory === '食品' ? '🥛' : '📦',
+        inShoppingList: false,
+      };
+      setItems([newItem, ...items]);
+      setCurrentScreen('list');
+      if (activeFlow === 'flow1') setCurrentStep(4);
+      triggerToast(`✓ 成功新增「${formName}」入庫！`);
+    }, 400);
+  };
+
+  const handleMarkUsed = (itemId: string) => {
+    setItems((prev) =>
+      prev.map((item) => {
+        if (item.id === itemId) {
+          const newQty = Math.max(0, item.quantity - 1);
+          return {
+            ...item,
+            quantity: newQty,
+            daysRemaining: newQty === 0 ? -99 : item.daysRemaining,
+          };
+        }
+        return item;
+      })
+    );
+    if (activeFlow === 'flow2') setCurrentStep(4);
+    triggerToast(`✓ 已標記扣減「${selectedItem.name}」1 單位庫存！`);
+  };
+
+  const handleToggleShopping = (itemId: string) => {
+    setItems((prev) =>
+      prev.map((item) => {
+        if (item.id === itemId) {
+          return { ...item, inShoppingList: true };
+        }
+        return item;
+      })
+    );
+    if (activeFlow === 'flow3') setCurrentStep(3);
+    triggerToast(`🛒 已將「${items.find((i) => i.id === itemId)?.name}」加入採買清單！`);
+  };
+
+  const handleCompletePurchase = (itemId: string) => {
+    setItems((prev) =>
+      prev.map((item) => {
+        if (item.id === itemId) {
+          return {
+            ...item,
+            inShoppingList: false,
+            quantity: item.quantity + 1,
+            status: 'normal',
+          };
+        }
+        return item;
+      })
+    );
+    if (activeFlow === 'flow3') setCurrentStep(4);
+    triggerToast('✓ 採買完成！物品已回補庫存！');
+  };

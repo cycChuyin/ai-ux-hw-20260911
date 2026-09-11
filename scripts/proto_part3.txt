@@ -1,0 +1,260 @@
+﻿        <div className="lg:col-span-7 flex justify-center">
+          <div className="w-full max-w-sm rounded-[44px] border-[10px] border-slate-900 bg-slate-900 p-2 shadow-2xl relative">
+            <div className="w-28 h-5 bg-black rounded-full mx-auto mb-1 flex items-center justify-center gap-2">
+              <div className="w-2.5 h-2.5 rounded-full bg-slate-800" />
+              <div className="w-1.5 h-1.5 rounded-full bg-slate-700" />
+            </div>
+
+            <div className="bg-slate-50 rounded-[32px] overflow-hidden flex flex-col h-[620px] relative font-sans text-xs">
+              <div className="h-6 bg-white px-5 flex items-center justify-between text-[11px] font-bold text-slate-800 shrink-0 border-b border-slate-100">
+                <span>09:41</span>
+                <div className="flex items-center gap-1.5 text-[10px]">
+                  <span>5G</span>
+                  <span>100%</span>
+                </div>
+              </div>
+
+              {toastMessage && (
+                <div className="absolute top-8 inset-x-4 z-50 bg-slate-900/95 text-white p-2.5 rounded-xl shadow-lg border border-slate-700 text-center text-xs font-semibold animate-fade-in">
+                  {toastMessage}
+                </div>
+              )}
+
+              <div className="flex-1 overflow-y-auto p-4">
+                {/* 1. HOME SCREEN */}
+                {currentScreen === 'home' && (
+                  <div className="space-y-3.5 animate-fade-in">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <span className="text-[10px] font-mono text-slate-400 block">HOME SWEET HOME</span>
+                        <h3 className="font-bold text-sm text-slate-900">我的家庭</h3>
+                        <p className="text-[11px] text-slate-500">晚安，Chuyin ・ 庫存良好</p>
+                      </div>
+                      <button 
+                        onClick={() => setCurrentScreen('reminders')}
+                        className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center relative cursor-pointer"
+                      >
+                        <Bell className="w-4 h-4 text-slate-600" />
+                        <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-rose-500" />
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <div 
+                        onClick={() => setCurrentScreen('list')}
+                        className="p-3 bg-white rounded-xl border border-slate-200 shadow-2xs cursor-pointer hover:border-slate-300"
+                      >
+                        <span className="text-xl font-black text-slate-900 font-mono block">{totalCount}</span>
+                        <span className="text-[11px] text-slate-500">全部物品 (件)</span>
+                      </div>
+                      <div 
+                        onClick={() => {
+                          setCurrentScreen('reminders');
+                          if (activeFlow === 'flow2') setCurrentStep(2);
+                        }}
+                        className="p-3 bg-orange-50 rounded-xl border border-orange-200 shadow-2xs cursor-pointer hover:border-orange-300"
+                      >
+                        <span className="text-xl font-black text-orange-600 font-mono block">{expiringItems.length}</span>
+                        <span className="text-[11px] text-orange-800 font-semibold">即將到期 (件)</span>
+                      </div>
+                      <div 
+                        onClick={() => setCurrentScreen('reminders')}
+                        className="p-3 bg-rose-50 rounded-xl border border-rose-200 shadow-2xs cursor-pointer hover:border-rose-300"
+                      >
+                        <span className="text-xl font-black text-rose-600 font-mono block">{expiredItems.length}</span>
+                        <span className="text-[11px] text-rose-800 font-semibold">已過期 (件)</span>
+                      </div>
+                      <div 
+                        onClick={() => setCurrentScreen('reminders')}
+                        className="p-3 bg-amber-50 rounded-xl border border-amber-200 shadow-2xs cursor-pointer hover:border-amber-300"
+                      >
+                        <span className="text-xl font-black text-amber-600 font-mono block">{lowStockItems.length}</span>
+                        <span className="text-[11px] text-amber-800 font-semibold">低庫存 (件)</span>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => {
+                          setCurrentScreen('add');
+                          if (activeFlow === 'flow1') setCurrentStep(2);
+                        }}
+                        className="py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl flex items-center justify-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>新增物品</span>
+                      </button>
+                      <button
+                        onClick={() => setCurrentScreen('shopping')}
+                        className="py-2.5 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl flex items-center justify-center gap-1.5 hover:bg-slate-50 transition-colors cursor-pointer"
+                      >
+                        <ShoppingCart className="w-4 h-4 text-slate-500" />
+                        <span>採買清單 ({shoppingListItems.length})</span>
+                      </button>
+                    </div>
+
+                    <div>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">
+                        需要優先處理
+                      </span>
+                      <div className="space-y-1.5">
+                        {items.slice(0, 3).map((item) => (
+                          <div
+                            key={item.id}
+                            onClick={() => {
+                              setSelectedItemId(item.id);
+                              setCurrentScreen('detail');
+                              if (activeFlow === 'flow2') setCurrentStep(3);
+                            }}
+                            className="p-2.5 bg-white rounded-xl border border-slate-200 flex items-center justify-between hover:border-orange-300 cursor-pointer transition-all"
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className="text-base">{item.icon}</span>
+                              <div>
+                                <span className="font-bold text-slate-800">{item.name}</span>
+                                <span className="text-[10px] text-slate-400 block">{item.location}</span>
+                              </div>
+                            </div>
+                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
+                              item.status === 'expiring' 
+                                ? 'bg-orange-100 text-orange-700' 
+                                : item.status === 'expired' 
+                                ? 'bg-rose-100 text-rose-700' 
+                                : 'bg-amber-100 text-amber-700'
+                            }`}>
+                              {item.status === 'expiring' ? `${item.daysRemaining} 天後到期` : item.status === 'expired' ? '已過期' : '建議補貨'}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* 2. INVENTORY LIST SCREEN */}
+                {currentScreen === 'list' && (
+                  <div className="space-y-3 animate-fade-in">
+                    <div className="flex justify-between items-center">
+                      <h3 className="font-bold text-sm text-slate-900">家庭庫存列表</h3>
+                      <button
+                        onClick={() => setCurrentScreen('add')}
+                        className="px-2.5 py-1 bg-orange-500 text-white rounded-lg text-xs font-bold"
+                      >
+                        ＋ 新增
+                      </button>
+                    </div>
+
+                    <div className="p-2 bg-white rounded-xl border border-slate-200 flex items-center gap-2 text-slate-400 text-xs">
+                      <Search className="w-3.5 h-3.5" />
+                      <span>搜尋全部 {items.length} 樣物品...</span>
+                    </div>
+
+                    <div className="space-y-2">
+                      {items.map((item) => (
+                        <div
+                          key={item.id}
+                          onClick={() => {
+                            setSelectedItemId(item.id);
+                            setCurrentScreen('detail');
+                          }}
+                          className="p-2.5 bg-white rounded-xl border border-slate-200 flex items-center justify-between hover:border-orange-300 cursor-pointer"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <span className="text-2xl">{item.icon}</span>
+                            <div>
+                              <h4 className="font-bold text-slate-800">{item.name}</h4>
+                              <span className="text-[10px] text-slate-400">{item.category}・{item.location}</span>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <span className="font-bold text-slate-800 block">{item.quantity} {item.unit}</span>
+                            <span className="text-[10px] text-slate-400">效期：{item.expiryDate}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* 3. ITEM DETAIL SCREEN */}
+                {currentScreen === 'detail' && (
+                  <div className="space-y-3.5 animate-fade-in">
+                    <div className="flex justify-between items-center">
+                      <button
+                        onClick={() => setCurrentScreen('home')}
+                        className="flex items-center gap-1 text-slate-500 hover:text-slate-800 cursor-pointer"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                        <span>返回</span>
+                      </button>
+                      <span className="font-bold text-slate-800 text-sm">物品檔案</span>
+                      <span className="w-8" />
+                    </div>
+
+                    <div className="p-4 bg-white rounded-2xl border border-slate-200 text-center">
+                      <span className="text-4xl block mb-1">{selectedItem.icon}</span>
+                      <h3 className="font-bold text-base text-slate-900">{selectedItem.name}</h3>
+                      <p className="text-[11px] text-slate-400 mt-0.5">{selectedItem.category} ・ {selectedItem.location}</p>
+                    </div>
+
+                    <div className="p-3.5 bg-white rounded-2xl border border-slate-200 text-center">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                        現有庫存存量
+                      </span>
+                      <div className="flex items-center justify-center gap-4 my-2">
+                        <button
+                          onClick={() => handleMarkUsed(selectedItem.id)}
+                          className="w-8 h-8 rounded-full bg-slate-100 border border-slate-300 font-bold text-sm cursor-pointer hover:bg-slate-200"
+                        >
+                          −
+                        </button>
+                        <span className="text-xl font-black text-slate-900 font-mono">
+                          {selectedItem.quantity} {selectedItem.unit}
+                        </span>
+                        <button
+                          onClick={() => {
+                            setItems((prev) =>
+                              prev.map((i) => (i.id === selectedItem.id ? { ...i, quantity: i.quantity + 1 } : i))
+                            );
+                            triggerToast('庫存已累加 1 瓶！');
+                          }}
+                          className="w-8 h-8 rounded-full bg-slate-100 border border-slate-300 font-bold text-sm cursor-pointer hover:bg-slate-200"
+                        >
+                          ＋
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 mt-3">
+                        <button
+                          onClick={() => handleMarkUsed(selectedItem.id)}
+                          className="py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1 cursor-pointer transition-colors"
+                        >
+                          <Check className="w-3.5 h-3.5" />
+                          <span>標記已使用</span>
+                        </button>
+                        <button
+                          onClick={() => handleToggleShopping(selectedItem.id)}
+                          className="py-2 bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-300 font-bold rounded-xl text-xs flex items-center justify-center gap-1 cursor-pointer transition-colors"
+                        >
+                          <ShoppingCart className="w-3.5 h-3.5" />
+                          <span>加入採買清單</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="p-3 bg-white rounded-xl border border-slate-200 space-y-1.5 text-[11px]">
+                      <div className="flex justify-between py-1 border-b border-slate-100">
+                        <span className="text-slate-400">有效期限</span>
+                        <span className="font-semibold text-slate-700">{selectedItem.expiryDate}</span>
+                      </div>
+                      <div className="flex justify-between py-1 border-b border-slate-100">
+                        <span className="text-slate-400">購買日期</span>
+                        <span className="text-slate-700">{selectedItem.purchaseDate}</span>
+                      </div>
+                      <div className="flex justify-between py-1">
+                        <span className="text-slate-400">主動提醒</span>
+                        <span className="font-semibold text-emerald-600">到期前 3 天推播</span>
+                      </div>
+                    </div>
+                  </div>
+                )}

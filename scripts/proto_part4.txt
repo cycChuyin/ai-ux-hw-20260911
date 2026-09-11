@@ -1,0 +1,311 @@
+﻿                {/* 4. ADD ITEM FORM SCREEN */}
+                {currentScreen === 'add' && (
+                  <div className="space-y-3 animate-fade-in">
+                    <div className="flex justify-between items-center">
+                      <button
+                        onClick={() => setCurrentScreen('home')}
+                        className="text-xs text-slate-500 font-semibold cursor-pointer"
+                      >
+                        取消
+                      </button>
+                      <h3 className="font-bold text-sm text-slate-900">新增家庭物品</h3>
+                      <span className="w-8" />
+                    </div>
+
+                    <div className="flex gap-1.5">
+                      <button
+                        onClick={() => handleNameChange('全脂鮮乳')}
+                        className="flex-1 py-1 px-2 bg-slate-100 hover:bg-orange-50 text-[10px] rounded-lg font-semibold text-slate-600 border border-slate-200 cursor-pointer text-center"
+                      >
+                        填入「鮮乳」(測重複防呆)
+                      </button>
+                      <button
+                        onClick={() => handleNameChange('常溫燕麥奶')}
+                        className="flex-1 py-1 px-2 bg-slate-100 hover:bg-slate-200 text-[10px] rounded-lg font-semibold text-slate-600 border border-slate-200 cursor-pointer text-center"
+                      >
+                        填入「燕麥奶」(測新物資)
+                      </button>
+                    </div>
+
+                    <div className="space-y-2.5">
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">
+                          物品名稱 <span className="text-rose-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={formName}
+                          onChange={(e) => handleNameChange(e.target.value)}
+                          placeholder="例如：牛奶、洗衣精"
+                          className="w-full p-2 bg-white rounded-lg border border-slate-300 text-xs font-medium focus:ring-2 focus:ring-orange-500 outline-hidden"
+                        />
+
+                        {showDuplicateWarning && (
+                          <div className="mt-1.5 p-2 bg-rose-50 border border-rose-200 rounded-lg text-[10px] text-rose-800 animate-fade-in flex items-start gap-1.5">
+                            <AlertTriangle className="w-3.5 h-3.5 text-rose-500 shrink-0 mt-0.5" />
+                            <div>
+                              <span className="font-bold block">偵測到可能重複之庫存！</span>
+                              冰箱中已有一瓶鮮乳。是否直接在首頁累加數量？
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <label className="text-[11px] font-bold text-slate-700 block mb-1">分類</label>
+                          <select
+                            value={formCategory}
+                            onChange={(e) => setFormCategory(e.target.value)}
+                            className="w-full p-2 bg-white rounded-lg border border-slate-300 text-xs text-slate-700"
+                          >
+                            <option value="食品">食品</option>
+                            <option value="日用品">日用品</option>
+                            <option value="清潔用品">清潔用品</option>
+                            <option value="藥品">藥品</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="text-[11px] font-bold text-slate-700 block mb-1">存放位置</label>
+                          <select
+                            value={formLocation}
+                            onChange={(e) => setFormLocation(e.target.value)}
+                            className="w-full p-2 bg-white rounded-lg border border-slate-300 text-xs text-slate-700"
+                          >
+                            <option value="冰箱冷藏">冰箱冷藏</option>
+                            <option value="廚房乾貨櫃">廚房乾貨櫃</option>
+                            <option value="儲藏室">儲藏室</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <label className="text-[11px] font-bold text-slate-700 block mb-1">數量</label>
+                          <input
+                            type="number"
+                            min="1"
+                            value={formQty}
+                            onChange={(e) => setFormQty(Number(e.target.value))}
+                            className="w-full p-2 bg-white rounded-lg border border-slate-300 text-xs text-center font-bold"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[11px] font-bold text-slate-700 block mb-1">單位</label>
+                          <select
+                            value={formUnit}
+                            onChange={(e) => setFormUnit(e.target.value)}
+                            className="w-full p-2 bg-white rounded-lg border border-slate-300 text-xs text-slate-700"
+                          >
+                            <option value="瓶">瓶</option>
+                            <option value="罐">罐</option>
+                            <option value="盒">盒</option>
+                            <option value="包">包</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-700 block mb-1">有效期限</label>
+                        <input
+                          type="date"
+                          value="2026-10-30"
+                          readOnly
+                          className="w-full p-2 bg-white rounded-lg border border-slate-300 text-xs text-slate-700"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="pt-2">
+                      <button
+                        onClick={handleSaveItem}
+                        disabled={isSaving}
+                        className="w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl shadow-xs transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+                      >
+                        {isSaving ? '儲存中...' : '確認儲存物品入庫'}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* 5. REMINDERS SCREEN */}
+                {currentScreen === 'reminders' && (
+                  <div className="space-y-3 animate-fade-in">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <h3 className="font-bold text-sm text-slate-900">提醒中心</h3>
+                        <span className="text-[10px] text-orange-600 font-bold block">
+                          共 {expiringItems.length + expiredItems.length + lowStockItems.length} 項待辦事項
+                        </span>
+                      </div>
+                    </div>
+
+                    <div>
+                      <span className="text-[10px] font-bold text-orange-500 uppercase tracking-wider block mb-1">
+                        3 天內即將到期
+                      </span>
+                      <div className="space-y-1.5">
+                        {expiringItems.map((item) => (
+                          <div key={item.id} className="p-2.5 bg-white rounded-xl border border-orange-200 shadow-2xs space-y-2">
+                            <div className="flex justify-between items-center">
+                              <div className="flex items-center gap-2">
+                                <span className="text-xl">{item.icon}</span>
+                                <div>
+                                  <h4 className="font-bold text-slate-800">{item.name}</h4>
+                                  <span className="text-[10px] text-slate-400">{item.location}</span>
+                                </div>
+                              </div>
+                              <span className="text-[10px] font-bold text-orange-600">剩 {item.daysRemaining} 天</span>
+                            </div>
+                            <div className="flex justify-end gap-1.5 pt-1 border-t border-slate-100">
+                              <button
+                                onClick={() => handleMarkUsed(item.id)}
+                                className="px-2.5 py-1 bg-emerald-500 text-white rounded-lg text-[10px] font-bold hover:bg-emerald-600 cursor-pointer"
+                              >
+                                標記已使用
+                              </button>
+                              <button
+                                onClick={() => handleToggleShopping(item.id)}
+                                className="px-2.5 py-1 bg-orange-50 text-orange-700 border border-orange-200 rounded-lg text-[10px] font-bold hover:bg-orange-100 cursor-pointer"
+                              >
+                                加入採買
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <span className="text-[10px] font-bold text-amber-500 uppercase tracking-wider block mb-1">
+                        庫存不足 (低水位)
+                      </span>
+                      <div className="space-y-1.5">
+                        {lowStockItems.map((item) => (
+                          <div key={item.id} className="p-2.5 bg-white rounded-xl border border-amber-200 shadow-2xs space-y-2">
+                            <div className="flex justify-between items-center">
+                              <div className="flex items-center gap-2">
+                                <span className="text-xl">{item.icon}</span>
+                                <div>
+                                  <h4 className="font-bold text-slate-800">{item.name}</h4>
+                                  <span className="text-[10px] text-slate-400">{item.unit}</span>
+                                </div>
+                              </div>
+                              <span className="text-[10px] font-bold text-amber-600">建議補貨</span>
+                            </div>
+                            <div className="flex justify-end gap-1.5 pt-1 border-t border-slate-100">
+                              <button
+                                onClick={() => handleToggleShopping(item.id)}
+                                className="px-2.5 py-1 bg-orange-500 text-white rounded-lg text-[10px] font-bold hover:bg-orange-600 cursor-pointer"
+                              >
+                                加入採買清單
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* 6. SHOPPING LIST SCREEN */}
+                {currentScreen === 'shopping' && (
+                  <div className="space-y-3 animate-fade-in">
+                    <div className="flex justify-between items-center">
+                      <h3 className="font-bold text-sm text-slate-900">家庭採買清單</h3>
+                      <span className="text-[10px] text-slate-400">共 {shoppingListItems.length} 項待買物資</span>
+                    </div>
+
+                    {shoppingListItems.length === 0 ? (
+                      <div className="p-8 text-center bg-white rounded-2xl border border-slate-200 space-y-2">
+                        <span className="text-3xl block">🛒</span>
+                        <h4 className="font-bold text-slate-700">目前沒有待買項目</h4>
+                        <p className="text-[11px] text-slate-400">當物品低庫存時，可一鍵加入採買清單。</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        {shoppingListItems.map((item) => (
+                          <div
+                            key={item.id}
+                            className="p-3 bg-white rounded-xl border border-slate-200 flex items-center justify-between shadow-2xs"
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className="text-2xl">{item.icon}</span>
+                              <div>
+                                <h4 className="font-bold text-slate-800">{item.name}</h4>
+                                <span className="text-[10px] text-slate-400">{item.category}・預計採買 1 單位</span>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => handleCompletePurchase(item.id)}
+                              className="px-2.5 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
+                            >
+                              標記已採買完成
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Bottom Nav Bar */}
+              <div className="h-14 bg-white border-t border-slate-200 px-3 flex items-center justify-around shrink-0 text-[10px] font-bold text-slate-400">
+                <button
+                  onClick={() => setCurrentScreen('home')}
+                  className={`flex flex-col items-center gap-0.5 cursor-pointer ${
+                    currentScreen === 'home' ? 'text-orange-500' : 'hover:text-slate-600'
+                  }`}
+                >
+                  <Home className="w-4 h-4" />
+                  <span>首頁</span>
+                </button>
+
+                <button
+                  onClick={() => setCurrentScreen('list')}
+                  className={`flex flex-col items-center gap-0.5 cursor-pointer ${
+                    currentScreen === 'list' ? 'text-orange-500' : 'hover:text-slate-600'
+                  }`}
+                >
+                  <Package className="w-4 h-4" />
+                  <span>庫存</span>
+                </button>
+
+                <button
+                  onClick={() => setCurrentScreen('add')}
+                  className="w-10 h-10 rounded-full bg-gradient-to-tr from-orange-500 to-amber-500 text-white flex items-center justify-center -mt-4 shadow-md shadow-orange-500/30 cursor-pointer"
+                >
+                  <Plus className="w-5 h-5" />
+                </button>
+
+                <button
+                  onClick={() => setCurrentScreen('shopping')}
+                  className={`flex flex-col items-center gap-0.5 cursor-pointer relative ${
+                    currentScreen === 'shopping' ? 'text-orange-500' : 'hover:text-slate-600'
+                  }`}
+                >
+                  <ShoppingCart className="w-4 h-4" />
+                  <span>採買</span>
+                  {shoppingListItems.length > 0 && (
+                    <span className="absolute -top-1 right-1 w-2 h-2 rounded-full bg-orange-500" />
+                  )}
+                </button>
+
+                <button
+                  onClick={() => setCurrentScreen('reminders')}
+                  className={`flex flex-col items-center gap-0.5 cursor-pointer ${
+                    currentScreen === 'reminders' ? 'text-orange-500' : 'hover:text-slate-600'
+                  }`}
+                >
+                  <Bell className="w-4 h-4" />
+                  <span>提醒</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

@@ -1,0 +1,83 @@
+﻿import os
+
+icons_content = """export { default as Sparkles } from 'lucide-react/dist/esm/icons/sparkles.mjs';
+export { default as Network } from 'lucide-react/dist/esm/icons/network.mjs';
+export { default as LayoutTemplate } from 'lucide-react/dist/esm/icons/layout-template.mjs';
+export { default as GitCommit } from 'lucide-react/dist/esm/icons/git-commit.mjs';
+export { default as Smartphone } from 'lucide-react/dist/esm/icons/smartphone.mjs';
+export { default as Box } from 'lucide-react/dist/esm/icons/box.mjs';
+export { default as ChevronRight } from 'lucide-react/dist/esm/icons/chevron-right.mjs';
+export { default as ChevronLeft } from 'lucide-react/dist/esm/icons/chevron-left.mjs';
+export { default as ChevronDown } from 'lucide-react/dist/esm/icons/chevron-down.mjs';
+export { default as ChevronUp } from 'lucide-react/dist/esm/icons/chevron-up.mjs';
+export { default as Menu } from 'lucide-react/dist/esm/icons/menu.mjs';
+export { default as X } from 'lucide-react/dist/esm/icons/x.mjs';
+export { default as ArrowLeft } from 'lucide-react/dist/esm/icons/arrow-left.mjs';
+export { default as ArrowRight } from 'lucide-react/dist/esm/icons/arrow-right.mjs';
+export { default as ArrowUp } from 'lucide-react/dist/esm/icons/arrow-up.mjs';
+export { default as CheckCircle2 } from 'lucide-react/dist/esm/icons/check-circle-2.mjs';
+export { default as ShieldAlert } from 'lucide-react/dist/esm/icons/shield-alert.mjs';
+export { default as Tag } from 'lucide-react/dist/esm/icons/tag.mjs';
+export { default as Home } from 'lucide-react/dist/esm/icons/home.mjs';
+export { default as LayoutDashboard } from 'lucide-react/dist/esm/icons/layout-dashboard.mjs';
+export { default as Package } from 'lucide-react/dist/esm/icons/package.mjs';
+export { default as PlusCircle } from 'lucide-react/dist/esm/icons/plus-circle.mjs';
+export { default as BellRing } from 'lucide-react/dist/esm/icons/bell-ring.mjs';
+export { default as ShoppingCart } from 'lucide-react/dist/esm/icons/shopping-cart.mjs';
+export { default as Settings } from 'lucide-react/dist/esm/icons/settings.mjs';
+export { default as Filter } from 'lucide-react/dist/esm/icons/filter.mjs';
+export { default as Layers } from 'lucide-react/dist/esm/icons/layers.mjs';
+export { default as Info } from 'lucide-react/dist/esm/icons/info.mjs';
+export { default as ExternalLink } from 'lucide-react/dist/esm/icons/external-link.mjs';
+export { default as Target } from 'lucide-react/dist/esm/icons/target.mjs';
+export { default as AlertCircle } from 'lucide-react/dist/esm/icons/alert-circle.mjs';
+export { default as CheckCircle } from 'lucide-react/dist/esm/icons/check-circle.mjs';
+export { default as Users } from 'lucide-react/dist/esm/icons/users.mjs';
+export { default as ShoppingBag } from 'lucide-react/dist/esm/icons/shopping-bag.mjs';
+export { default as Compass } from 'lucide-react/dist/esm/icons/compass.mjs';
+export { default as Quote } from 'lucide-react/dist/esm/icons/quote.mjs';
+export { default as ShieldCheck } from 'lucide-react/dist/esm/icons/shield-check.mjs';
+export { default as Search } from 'lucide-react/dist/esm/icons/search.mjs';
+export { default as Bell } from 'lucide-react/dist/esm/icons/bell.mjs';
+export { default as Plus } from 'lucide-react/dist/esm/icons/plus.mjs';
+export { default as Minus } from 'lucide-react/dist/esm/icons/minus.mjs';
+export { default as Calendar } from 'lucide-react/dist/esm/icons/calendar.mjs';
+export { default as Camera } from 'lucide-react/dist/esm/icons/camera.mjs';
+export { default as Barcode } from 'lucide-react/dist/esm/icons/barcode.mjs';
+export { default as Check } from 'lucide-react/dist/esm/icons/check.mjs';
+export { default as RotateCcw } from 'lucide-react/dist/esm/icons/rotate-ccw.mjs';
+export { default as AlertTriangle } from 'lucide-react/dist/esm/icons/alert-triangle.mjs';
+"""
+
+with open('src/components/Icons.tsx', 'w', encoding='utf-8') as f:
+    f.write(icons_content)
+print("Icons.tsx created")
+
+# Update imports in files
+files_to_update = [
+    ('src/components/Header.tsx', "from 'lucide-react'", "from './Icons'"),
+    ('src/components/FooterNav.tsx', "from 'lucide-react'", "from './Icons'"),
+    ('src/components/NodeDetailDrawer.tsx', "from 'lucide-react'", "from './Icons'"),
+    ('src/pages/Overview.tsx', "from 'lucide-react'", "from '../components/Icons'"),
+    ('src/pages/FunctionalMap.tsx', "from 'lucide-react'", "from '../components/Icons'"),
+    ('src/pages/Wireframe.tsx', "from 'lucide-react'", "from '../components/Icons'"),
+    ('src/pages/UserFlow.tsx', "from 'lucide-react'", "from '../components/Icons'"),
+    ('src/pages/Prototype.tsx', "from 'lucide-react'", "from '../components/Icons'"),
+]
+
+for filepath, old_str, new_str in files_to_update:
+    if os.path.exists(filepath):
+        with open(filepath, 'r', encoding='utf-8') as f:
+            c = f.read()
+        c = c.replace(old_str, new_str)
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.write(c)
+        print(f"Updated: {filepath}")
+
+# Re-enable tailwind in vite.config.ts
+with open('vite.config.ts', 'r', encoding='utf-8') as f:
+    vc = f.read()
+vc = vc.replace('// tailwindcss(),', 'tailwindcss(),')
+with open('vite.config.ts', 'w', encoding='utf-8') as f:
+    f.write(vc)
+print("vite.config.ts updated with tailwindcss")
